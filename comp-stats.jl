@@ -36,7 +36,7 @@ function processGameRow(row)
 end
 
 function processStatRow(row)
-    (name = row[1], kit_type = row[2], playtime = row[3], kills = row[4], deaths = row[5],
+    (name = lowercase(row[1]), kit_type = row[2], playtime = row[3], kills = row[4], deaths = row[5],
     damage_dealt = row[6], damage_received = row[7], flags_captured = row[21], flags_recovered = row[18], flags_stolen = row[19], drops = row[20],
     time_with_flag = row[22], hp_restored = row[8])
 end
@@ -82,7 +82,7 @@ function getCompetitiveStats(player, n=-1, autosave=false)
     Threads.@threads for game in games
         try
             data = getGameStats(game[1])
-            data = data[(data.name .== player) .& (data.playtime .> 0.0), :]
+            data = data[(data.name .== lowercase(player)) .& (data.playtime .> 0.0), :]
             select!(data, Not(:name))
             append!(df, data)
 
