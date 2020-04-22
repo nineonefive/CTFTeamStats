@@ -16,7 +16,7 @@ ACE_BLUE2
 Z_Cray
 PowerMoves
 R4ve
-Colorr
+colorswitch
 Yamiiiii
 andrewdavid475
 talismax
