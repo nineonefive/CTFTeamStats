@@ -1,0 +1,4 @@
+kit_type,playtime,kills,deaths,flags_captured,flags_recovered,flags_stolen,time_with_flag,damage_dealt,damage_received,hp_restored,kdr
+NINJA,23570.0,251.0,647.0,1.0,74.0,0.0,8.0,33428.429000000004,16478.923000000003,0.0,0.38794435857805254
+HEAVY,73.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,NaN
+MEDIC,119.0,1.0,1.0,0.0,0.0,0.0,10.0,20.0,24.0,181.0,1.0
