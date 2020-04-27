@@ -2,6 +2,8 @@
 
 So this project really isn't to showcase code as much as it is to just house the competitive stats of the various teams competing in the tournament. The list of teams and their rosters is under `teams/`. The saved stats are under `stats/<team name>`.
 
+Additionally, you can find casual class leaderboards under `leaderboards/casual/` and competitive (match server) ones under `leaderboards/competitive/`. Each CSV is currently unsorted, so you have to download it, open it with some spreadsheet program (Excel or Google Sheets), and sort it yourself. Gotta figure out how to sort it in an interface at some point..
+
 ## Usage
 
 If for some reason you want to run the code here, you need Julia installed, as well as the packages:
