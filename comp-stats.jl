@@ -1,67 +1,24 @@
-using HTTP
-using Gumbo
 using DataFrames
 using CSV
 using ProgressBars
 using Logging
+using JSON
 
-function getPlayerPage(player)
-    r = HTTP.get("https://www.brawl.com/MPS/MPSStatsCTF.php?player=$(player)")
-    doc = parsehtml(String(r.body))
-    table = doc.root[2][2]
-    header = table[1][1]
-    rows = table[2].children
-    
-    (header, rows)
+module Players
+    include("julia/players.jl")
 end
 
-function isNameValid(player)
-    r = HTTP.get("https://www.brawl.com/MPS/MPSStatsCTF.php?player=$(player)")
-    doc = parsehtml(String(r.body))
-    label = text(doc.root[2][1][1])
-
-    return label == "Played Games"
+module Parsing
+    include("julia/stats-parsing.jl")
 end
 
-getThText(th) = text(th.children[1])
-htmlRowToVec(row) = getThText.(row.children)
-convertRow(row) = [row[1:2]; [parse(Float64, x) for x in row[3:end]]]
-
-function processGameRow(row)
-    elem = row.children
-    game_id = text(elem[1][1].children[1])
-    server = text(elem[4].children[1])
-    
-    (game_id, server)
-end
-
-function processStatRow(row)
-    (name = lowercase(row[1]), kit_type = row[2], playtime = row[3], kills = row[4], deaths = row[5],
-    damage_dealt = row[6], damage_received = row[7], flags_captured = row[21], flags_recovered = row[18], flags_stolen = row[19], drops = row[20],
-    time_with_flag = row[22], hp_restored = row[8])
-end
-
-function getGameStats(game)
-    r = HTTP.get("https://www.brawl.com/MPS/MPSStatsCTF.php?game=$(game)");
-    doc = parsehtml(String(r.body))
-    table = doc.root[2].children[end] # last table in the document, per class stats
-    header = htmlRowToVec(table[1][1])
-    rows = table[2].children
-    
-    rows = htmlRowToVec.(rows)
-    rows = convertRow.(rows)
-    
-    df = DataFrame()
-    for row in rows
-        push!(df, processStatRow(row))
-    end
-    
-    return df
+module Metadata
+    include("julia/metadata.jl")
 end
 
 function getCompetitiveStats(player, n=-1, autosave=false)
-        header, rows = getPlayerPage(player)
-        games = processGameRow.(rows)
+        header, rows = Parsing.getPlayerPage(player)
+        games = Parsing.processGameRow.(rows)
     
     # only competitive games
     filter!(x -> occursin("ctfmatch", x[2]), games)
@@ -81,7 +38,7 @@ function getCompetitiveStats(player, n=-1, autosave=false)
     last_updated = 0
     Threads.@threads for game in games
         try
-            data = getGameStats(game[1])
+            data = Parsing.getGameStats(game[1])
             data = data[(data.name .== lowercase(player)) .& (data.playtime .> 0.0), :]
             select!(data, Not(:name))
             append!(df, data)
@@ -117,14 +74,14 @@ function getCompetitiveStats(player, n=-1, autosave=false)
     
 end
 
-function getTeamStats(team)
-    names = open("./teams/$team.txt", "r") do f
-        lines = readlines(f)
-        (lines)
-    end
+function getTeamStats(team, invalid)
+    names = loadTeamRoster(team)
 
     updates = DataFrame()
     for name in ProgressBar(names)
+        if name in invalid
+            continue
+        end
         time = @elapsed last_updated, df = getCompetitiveStats(name)
         push!(updates, (name=name, game=last_updated))
 
@@ -138,53 +95,69 @@ function getTeamStats(team)
     return updates
 end
 
-function verifyTeams()
-    teams = cd(readdir, "teams")
-    teams = [team[begin:end - 4] for team in teams]
-
+function verifyTeamRoster!(team, last_updated=Metadata.getNameUpdateTime())
     invalid_names = []
 
-    for team in teams
-        @info "Verifying $team"
-        names = open("./teams/$team.txt", "r") do f
-            lines = readlines(f)
-            (lines)
-        end
+    @info "Verifying $team"
+    names = loadTeamRoster(team)
 
-        Threads.@threads for name in names
-            res = isNameValid(name)
-            if !res
-                @info "Invalid name $name"
-                push!(invalid_names, "$team/$name")
+    Threads.@threads for i in axes(names, 1)
+        name = names[i]
+        res = Players.verifyPlayer(name, last_updated)
+        if isnothing(res)
+            @info "Unresolved name $name"
+            push!(invalid_names, name)
+        else
+            if name != res[begin]
+                @info "Updated $name to $(res[begin])"
+                names[i] = res[begin]
+
+                mv("stats/$team/$name.csv", "stats/$team/$(res[begin]).csv")
             end
         end
     end
 
-    return isempty(invalid_names)
+    open("./teams/$team.txt", "w") do f
+        for name in names
+            write(f, "$name\n")
+        end
+    end
+
+    return isempty(invalid_names), invalid_names
 
 end
 
+function loadTeamRoster(team)
+    names = open("./teams/$team.txt", "r") do f
+        lines = readlines(f)
+        (lines)
+    end
+
+    return filter(x -> x != "", names)
+end
+
+function getAllTeams()
+    teams = cd(readdir, "teams")
+    teams = [team[begin:end - 4] for team in teams]
+end
+
+
 function loadAllTeams()
     updates = DataFrame()
-
-    if !verifyTeams()
-        return
-    end
 
     # logging
     open("log.txt", "w") do io
         logger = SimpleLogger(io)
         with_logger(logger) do
-            teams = cd(readdir, "teams")
-            teams = [team[begin:end - 4] for team in teams]
-
+            teams = getAllTeams()
             @info "$(size(teams)[1]) teams found.."
             println("$(size(teams)[1]) teams found..")
 
             for team in teams
+                @info "Verifying $team"
+                res, invalid = verifyTeamRoster!(team)
                 @info "Processing $team.."
-                println("Processing $team..")
-                u = getTeamStats(team)
+                u = getTeamStats(team, invalid)
                 append!(updates, u)
             end
         end
