@@ -1,6 +1,7 @@
 using HTTP
 using Gumbo
 using DataFrames
+using Dates
 
 """Returns the table found on the player page, if found"""
 function getPlayerPage(player)
@@ -48,4 +49,33 @@ function getGameStats(game)
     end
     
     return df
+end
+
+"Tells whether a URL belongs to the match server"
+ismatchserver(s) = !isnothing(match(r"\d+\.ctfmatch\.brawl\.com", s))
+
+"Holder for data about a game"
+struct Game
+    game  :: Int
+    start :: DateTime
+    end_  :: DateTime
+    url   :: String
+end
+
+"Returns start time, end time, and server url of a game"
+function getGameMetadata(game)
+    r = HTTP.get("https://www.brawl.com/MPS/MPSStatsCTF.php?game=$(game)");
+    doc = parsehtml(String(r.body))
+
+    date_pattern = r"\d+\-\d+\-\d+\s\d+\:\d+\:\d+"
+    datef = dateformat"YYYY-mm-dd HH:MM:SS"
+    
+    server_pattern = r"\d+(\.\w+)+\.com"
+
+    md = text(doc.root[2].children[2][1])
+    start = match(date_pattern, md)
+    end_ = match(date_pattern, md, start.offset + length(start.match))
+    url = match(server_pattern, md)
+    
+    Game(game, DateTime(start.match, datef), DateTime(end_.match, datef), url.match)
 end
