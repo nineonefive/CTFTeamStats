@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>CTF Class Leaderboards</title>
+  </head>
+  <body class="bg-light">
+
+    <style>
+        .list-group-item-action.active {
+            background-color: #17a2b8;
+            border-color: #1494a8;
+        }
+
+        nav > a.nav-link {
+            color: #999999;
+        }
+
+        nav > a.nav-link.active, nav > a.nav-link:hover {
+            color: black;
+        }
+
+        th:hover {
+            cursor: pointer;
+            background-color: #e0e0e0;
+        }
+
+        th.bg-info {
+            color: white;
+        }
+
+        th.bg-info:hover {
+            background-color: #1494a8;
+        }
+
+    </style>
+
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+        <span class="navbar-brand mb-0 h1">CTF Stats</span>
+        <ul class="navbar-nav">
+            <li class="navbar-link">
+                <a class="nav-link" href="#">Leaderboards <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="navbar-link">
+                <a class="nav-link disabled" href="#">2020 Tournament</a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="nav-scroller bg-white shadow-sm">
+        <nav class="nav nav-underline justify-content-md-center">
+            <a class="nav-link" href="#">Archer</a>
+            <a class="nav-link" href="#">Assassin</a>
+            <a class="nav-link" href="#">Chemist</a>
+            <a class="nav-link" href="#">Dwarf</a>
+            <a class="nav-link" href="#">Elf</a>
+            <a class="nav-link" href="#">Engineer</a>
+            <a class="nav-link" href="#">Fashionista</a>
+            <a class="nav-link" href="#">Heavy</a>
+            <a class="nav-link" href="#">Mage</a>
+            <a class="nav-link" href="#">Medic</a>
+            <a class="nav-link" href="#">Necro</a>
+            <a class="nav-link" href="#">Ninja</a>
+            <a class="nav-link" href="#">Pyro</a>
+            <a class="nav-link" href="#">Scout</a>
+            <a class="nav-link" href="#">Soldier</a>
+        </nav>
+    </div>
+
+    <main role="main" class="container-fluid">
+        <div class="row py-2">
+            <div class="col-sm justify-content-md-center">
+                <h1 id="title">Class Leaderboards</h1>
+            </div>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-info active">
+                  <input type="radio" name="options" id="casual" autocomplete="off" checked>Casual
+                </label>
+                <label class="btn btn-info">
+                  <input type="radio" name="options" id="competitive" autocomplete="off">Competitive
+                </label>
+            </div>
+        </div>
+        <div class="row pt-5">
+            <!-- Dynamic Table -->
+            <div class="col">
+                <div class="table-responsive bg-white">
+                    <table class="table table-hover" id="stats-table">
+                        <thead id="header">
+                            <tr>
+                                <th scope="col" class="bg-info" flag="name">Name</th>
+                                <th scope="col" flag="playtime">Playtime</th>
+                                <th scope="col" flag="kills">Kills</th>
+                                <th scope="col" flag="deaths">Deaths</th>
+                                <th scope="col" flag="kdr">KDR</th>
+                                <th scope="col" flag="flags_captured">Captures</th>
+                                <th scope="col" flag="flags_recovered">Recoveries</th>
+                                <th scope="col" flag="flags_stolen">Steals</th>
+                                <th scope="col" flag="time_with_flag">Time with Flag</th>
+                                <th scope="col" flag="damage_dealt">Damage Dealt</th>
+                                <th scope="col" flag="damage_received">Damage Taken</th>
+                                <th scope="col" flag="hp_restored">HP Restored</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+  
+    <footer class="footer bg-dark mt-3 py-3">
+        <div class="container-fluid">
+            <span class="text-light pl-4">Made by 915</span>
+        </div>
+    </footer>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  
+    <!-- Firebase Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-firestore.js"></script>
+
+    <script>
+        var level = "casual";
+        var ctfClass = "Archer";
+        var flag = "name";
+
+        var tablerows = null;
+        var reverse = false;
+
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+          apiKey: "AIzaSyB7vvhOMxzYGeAK7-eMcJIJUQ5sNQQOkIs",
+          authDomain: "ctf-stats-7f71d.firebaseapp.com",
+          databaseURL: "https://ctf-stats-7f71d.firebaseio.com",
+          projectId: "ctf-stats-7f71d",
+          storageBucket: "ctf-stats-7f71d.appspot.com",
+          messagingSenderId: "532957757645",
+          appId: "1:532957757645:web:14ecfda2b2f9c396cb2984",
+          measurementId: "G-928WMRV0RS"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // class navigation
+        $("nav > a.nav-link").click(event => {
+            $("nav > a.nav-link").removeClass("active");
+            event.target.classList.add("active");
+            ctfClass = event.target.innerHTML;
+
+            regenerateTable();
+        })
+
+        // level navigation
+        $("input").click(event => {
+            level = event.target.getAttribute("id");
+
+            regenerateTable();
+        })
+
+        // sorting
+        $("th").click(event => {
+            if (event.target.classList.contains("bg-info")){
+                reverse = !reverse;
+                resortTable();
+            } else {
+                $("th").removeClass("bg-info");
+                $("th").addClass("bg-white");
+                event.target.classList.remove("bg-white")
+                event.target.classList.add("bg-info");
+
+                flag = event.target.getAttribute("flag");
+                resortTable();
+            }
+        })
+
+        // Returns a promise to the data (accessible by result.data())
+        async function getLeaderboard(level, ctfClass) {
+            return firebase.firestore()
+                .collection("leaderboards")
+                .doc(level)
+                .collection("classes")
+                .doc(ctfClass)
+                .get();
+        }
+
+        // clears and recreates the table
+        async function regenerateTable() {
+            let result = await getLeaderboard(level, ctfClass);
+            let rows = convertToRows(result.data().users);
+
+            tablerows = sortRows(rows, flagToIdx(flag));
+            constructTable(tablerows);
+        }
+
+        async function resortTable() {
+            tablerows = sortRows(tablerows, flagToIdx(flag));
+            constructTable(tablerows);
+        }
+
+        function flagToIdx(flag){
+            let header = ["name", "playtime", "kills", "deaths", "kdr", "flags_captured", 
+            "flags_recovered", "flags_stolen", "time_with_flag", "damage_dealt", 
+            "damage_received", "hp_restored"];
+
+            return header.indexOf(flag);
+        }
+
+        function sortRows(rows, idx) {
+            let result = null;
+            if (idx == 0){
+                result = rows.sort((a, b) => {
+                    if (a[idx] > b[idx]) return 1;
+                    else if (a[idx] == b[idx]) return 0;
+                    else return -1;
+                });
+            } else {
+                result =  rows.sort((a, b) => {
+                    if (a[idx] > b[idx]) return -1;
+                    else if (a[idx] == b[idx]) return 0;
+                    else return 1;
+                });
+            }
+
+            if (reverse){
+                return result.reverse();
+            }
+
+            return result;
+        }
+
+        function convertToRows(data) {
+            let result = [];
+            Object.keys(data).forEach(key => {
+                result.push([key].concat(data[key]))
+            });
+
+            return result;
+        }
+
+        // given data, constructs the table
+        function constructTable(rows) {
+            $("tbody").html("");
+            // take top 50 rows
+            rows.slice(0, Math.min(50, rows.length)).forEach(row => {
+                var elem = "<tr>";
+
+                row.forEach(param => {
+                    elem += "<td>" + param + "</td>"
+                });
+                
+                elem += "</tr>";
+                
+                $("#data").append(elem);
+            })
+        }
+
+    </script>
+
+    </body>
+</html>
