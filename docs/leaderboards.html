@@ -96,6 +96,7 @@
                     <table class="table table-hover" id="stats-table">
                         <thead id="header">
                             <tr>
+                                <th scope="col">#</th>
                                 <th scope="col" class="bg-info" flag="name">Name</th>
                                 <th scope="col" flag="playtime">Playtime</th>
                                 <th scope="col" flag="kills">Kills</th>
@@ -164,30 +165,33 @@
             ctfClass = event.target.innerHTML;
 
             regenerateTable();
-        })
+        });
 
         // level navigation
         $("input").click(event => {
             level = event.target.getAttribute("id");
 
             regenerateTable();
-        })
+        });
 
         // sorting
         $("th").click(event => {
-            if (event.target.classList.contains("bg-info")){
-                reverse = !reverse;
-                resortTable();
-            } else {
-                $("th").removeClass("bg-info");
-                $("th").addClass("bg-white");
-                event.target.classList.remove("bg-white")
-                event.target.classList.add("bg-info");
+            if (event.target.hasAttribute("flag")){
+                if (event.target.getAttribute("flag") == flag){
+                    reverse = !reverse;
+                    resortTable();
+                } else {
+                    reverse = false;
+                    $("th").removeClass("bg-info");
+                    $("th").addClass("bg-white");
+                    event.target.classList.remove("bg-white")
+                    event.target.classList.add("bg-info");
 
-                flag = event.target.getAttribute("flag");
-                resortTable();
+                    flag = event.target.getAttribute("flag");
+                    resortTable();
+                }
             }
-        })
+        });
 
         // Returns a promise to the data (accessible by result.data())
         async function getLeaderboard(level, ctfClass) {
@@ -256,9 +260,9 @@
         // given data, constructs the table
         function constructTable(rows) {
             $("tbody").html("");
-            // take top 50 rows
-            rows.slice(0, Math.min(50, rows.length)).forEach(row => {
-                var elem = "<tr>";
+            let i = (reverse) ? rows.length : 1;
+            rows.forEach(row => {
+                var elem = "<tr><td scope=\"row\">" + i + "</td>";
 
                 row.forEach(param => {
                     elem += "<td>" + param + "</td>"
@@ -267,6 +271,8 @@
                 elem += "</tr>";
                 
                 $("#data").append(elem);
+                if (reverse) i--;
+                else i++;
             })
         }
 
