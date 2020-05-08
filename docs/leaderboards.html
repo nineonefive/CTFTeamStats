@@ -263,6 +263,8 @@
                 // fix Infinity => Kills / 1
                 else if (row[4] == Infinity) row[4] = row[2];
 
+                if (level == "competitive") row[1] = (row[1] / (3600 * 24)).toFixed(3);
+
                 result.push(row);
             });
 
