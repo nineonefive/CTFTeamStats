@@ -26,6 +26,10 @@
             color: black;
         }
 
+        nav > a.nav-link.active {
+            font-weight: bold;
+        }
+
         th:hover {
             cursor: pointer;
             background-color: #e0e0e0;
@@ -183,8 +187,6 @@
                 } else {
                     reverse = false;
                     $("th").removeClass("bg-info");
-                    $("th").addClass("bg-white");
-                    event.target.classList.remove("bg-white")
                     event.target.classList.add("bg-info");
 
                     flag = event.target.getAttribute("flag");
