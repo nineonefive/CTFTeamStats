@@ -82,7 +82,7 @@
         <div class="row justify-content-md-center">
             <div class="btn-group btn-group-toggle" data-toggle="buttons">
                 <label class="btn btn-info active">
-                  <input type="radio" name="options" id="casual" autocomplete="off" checked>Casual
+                  <input type="radio" name="options" id="casual" autocomplete="off">Casual
                 </label>
                 <label class="btn btn-info">
                   <input type="radio" name="options" id="competitive" autocomplete="off">Competitive
@@ -137,8 +137,8 @@
     <script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-firestore.js"></script>
 
     <script>
-        var level = "casual";
-        var ctfClass = "Archer";
+        var level = "";
+        var ctfClass = "";
         var flag = "name";
 
         var tablerows = null;
@@ -205,6 +205,8 @@
 
         // clears and recreates the table
         async function regenerateTable() {
+            if (level == "" || ctfClass == "") return;
+
             let result = await getLeaderboard(level, ctfClass);
             let rows = convertToRows(result.data().users);
 
@@ -251,7 +253,15 @@
         function convertToRows(data) {
             let result = [];
             Object.keys(data).forEach(key => {
-                result.push([key].concat(data[key]))
+                let row = [key].concat(data[key]);
+
+                // fix NaN => 0
+                if (isNaN(row[4])) row[4] = 0;
+
+                // fix Infinity => Kills / 1
+                else if (row[4] == Infinity) row[4] = row[2];
+
+                result.push(row);
             });
 
             return result;
@@ -264,7 +274,9 @@
             rows.forEach(row => {
                 var elem = "<tr><td scope=\"row\">" + i + "</td>";
 
-                row.forEach(param => {
+                elem += "<td><span><img src=\"http://cravatar.eu/avatar/" + row[0] + "/15.png\"></img> " + row[0] + "</span></td>";
+
+                row.slice(1, row.length).forEach(param => {
                     elem += "<td>" + param + "</td>"
                 });
                 
