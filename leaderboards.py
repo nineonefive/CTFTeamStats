@@ -166,8 +166,9 @@ def generateCasualLeaderboards():
     
     for c in ctfClasses:
         leaderboard[c] = leaderboard[c].reindex(columns=column_order)
-        print(f"Casual {c} leaderboard")
-        print(leaderboard[c].head())
+        leaderboard[c] = leaderboard[c].replace([np.inf], np.nan).fillna(0).round(3)
+        # print(f"Casual {c} leaderboard")
+        # print(leaderboard[c].head())
         leaderboard[c].to_csv(f"leaderboards/casual/{c}.csv", index=False)
 
 def generateCompetitiveLeaderboards():
@@ -196,6 +197,9 @@ def generateCompetitiveLeaderboards():
             df = df.append(entry)
         
         df = df.reindex(columns=column_order)
+
+        df.playtime /= 3600*24
+        df = df.replace([np.inf], np.nan).fillna(0).round(3)
         # print(df.head())
         df.to_csv(f"leaderboards/competitive/{c}.csv", index=False)
 

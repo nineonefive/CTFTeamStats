@@ -1,2 +1,3 @@
 kit_type,playtime,kills,deaths,flags_captured,flags_recovered,flags_stolen,time_with_flag,damage_dealt,damage_received,hp_restored,kdr
-NINJA,14464.0,250.0,365.0,1.0,53.0,1.0,7.0,23457.669,10373.650000000001,0.0,0.684931506849315
+NINJA,34927.0,568.0,879.0,2.0,148.0,5.0,74.0,61595.719000000005,25535.89900000001,0.0,0.646188850967008
+MEDIC,96.0,0.0,2.0,0.0,1.0,0.0,0.0,12.5,22.0,64.0,0.0
