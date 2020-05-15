@@ -52,7 +52,7 @@
                 <a class="nav-link" href="#">Leaderboards <span class="sr-only">(current)</span></a>
             </li>
             <li class="navbar-link">
-                <a class="nav-link disabled" href="#">2020 Tournament</a>
+                <a class="nav-link" href="ctf-tourney-2020.html">2020 Tournament</a>
             </li>
         </ul>
     </nav>
@@ -124,7 +124,7 @@
         </div>
     </main>
   
-    <footer class="footer bg-dark mt-3 py-3">
+    <footer class="footer bg-dark mt-3 py-3 fixed-bottom" id="footer">
         <div class="container-fluid">
             <span class="text-light pl-4">Made by 915</span>
         </div>
@@ -214,6 +214,7 @@
 
             tablerows = sortRows(rows, flagToIdx(flag));
             constructTable(tablerows);
+            $("#footer").removeClass("fixed-bottom")
         }
 
         async function resortTable() {

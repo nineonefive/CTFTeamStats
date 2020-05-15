@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>2020 Tournament Matches</title>
+  </head>
+  <body>
+    <style>
+        .game-link, .game-link:visited, .game-link:hover {
+            color: black;
+            text-decoration: none;
+        }
+    </style>
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+        <span class="navbar-brand mb-0 h1">CTF Stats</span>
+        <ul class="navbar-nav">
+            <li class="navbar-link">
+                <a class="nav-link" href="leaderboards.html">Leaderboards</a>
+            </li>
+            <li class="navbar-link">
+                <a class="nav-link" href="#">2020 Tournament</a>
+            </li>
+        </ul>
+    </nav>
+
+    <main role="main" class="container-fluid">
+        <div class="row py-2">
+            <div class="col-sm">
+                <h1 id="title">Match History</h1>
+            </div>
+        </div>
+        <div class="row py-2">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6 justify-content-md-center">
+                <h3>Group Stage</h3>
+            </div>
+            <div class="col-sm-3"></div>
+        </div>
+        
+        <div id="group-stage">
+
+        </div>
+    </main>
+
+    <footer class="footer bg-dark mt-3 py-3">
+        <div class="container-fluid">
+            <span class="text-light pl-4">Made by 915</span>
+        </div>
+    </footer>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+    <!-- React -->
+    <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <script type="text/babel" src="tourney-components.js"></script>
+
+    <!-- Firebase Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-firestore.js"></script>
+
+    <script>
+        var firebaseConfig = {
+          apiKey: "AIzaSyB7vvhOMxzYGeAK7-eMcJIJUQ5sNQQOkIs",
+          authDomain: "ctf-stats-7f71d.firebaseapp.com",
+          databaseURL: "https://ctf-stats-7f71d.firebaseio.com",
+          projectId: "ctf-stats-7f71d",
+          storageBucket: "ctf-stats-7f71d.appspot.com",
+          messagingSenderId: "532957757645",
+          appId: "1:532957757645:web:14ecfda2b2f9c396cb2984",
+          measurementId: "G-928WMRV0RS"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        async function getGroupStageMatches(){
+            let res = await firebase.firestore()
+                .collection("tournament")
+                .doc("CTF2020")
+                .collection("group-stage")
+                .get()
+            return res.docs.map(doc => doc.data());
+        }
+    </script>
+
+    <script type="text/babel">
+        getGroupStageMatches().then(result => {
+            ReactDOM.render(<div>{result.sort((match1, match2) => {
+                if (match1.time > match2.time) return -1;
+                else if (match1.time < match2.time) return 1;
+                else return 0;
+            }).map(match => CardRow(match))}</div>, document.querySelector("#group-stage"));
+        })
+
+    </script>
+  </body>
+</html>
