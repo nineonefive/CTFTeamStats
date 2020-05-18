@@ -21,6 +21,10 @@
             color: black;
             text-decoration: none;
         }
+
+        .bg-purple {
+            background-color: plum;
+        }
     </style>
 
     <header>
@@ -61,12 +65,23 @@
               <p class="lead text-muted">
                   Map names link to the corresponding game stats. MVP given by CTF Match Spotlight.
                   <br />
-                  Watch the streams <a target="blank" href="https://www.youtube.com/playlist?list=PLCjuBMqh0PAloVqwImichuEK1zsAJidEL">here</a>.
-
+                  Watch the group stage streams <a target="blank" href="https://www.youtube.com/playlist?list=PLCjuBMqh0PAloVqwImichuEK1zsAJidEL">here</a>.
+                  Watch the semifinal and final streams <a target="blank" href="https://www.youtube.com/channel/UCDHRIcT3eQ9HEFlqGtv_9kQ">here</a>.
               </p>
             </div>
         </section>
         <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-6 justify-content-center">
+                    <h3>Semifinals</h3>
+                </div>
+                <div class="col-sm-3"></div>
+            </div>
+            <div id="semifinals">
+
+            </div>
+
             <div class="row py-2">
                 <div class="col-sm-3"></div>
                 <div class="col-sm-6 justify-content-center">
@@ -127,9 +142,26 @@
                 .get()
             return res.docs.map(doc => doc.data());
         }
+
+        async function getSemifinalMatches(){
+            let res = await firebase.firestore()
+                .collection("tournament")
+                .doc("CTF2020")
+                .collection("semifinals")
+                .get()
+            return res.docs.map(doc => doc.data());
+        }
     </script>
 
     <script type="text/babel">
+        getSemifinalMatches().then(result => {
+            ReactDOM.render(<div>{result.sort((match1, match2) => {
+                if (match1.time > match2.time) return -1;
+                else if (match1.time < match2.time) return 1;
+                else return 0;
+            }).map(match => CardRow(match))}</div>, document.querySelector("#semifinals"));
+        })
+
         getGroupStageMatches().then(result => {
             ReactDOM.render(<div>{result.sort((match1, match2) => {
                 if (match1.time > match2.time) return -1;

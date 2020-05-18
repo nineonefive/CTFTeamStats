@@ -12,7 +12,7 @@ function CardRow(match) {
 
 function Match(match) {
     return (
-        <div class={"card " + ((match.conference == "red") ? "bg-danger" : (match.conference == "blue") ? "bg-info" : "")} style={{color: "white"}}>
+        <div class={"card " + ((match.conference == "red") ? "bg-danger" : (match.conference == "blue") ? "bg-info" : (match.conference == "semifinal") ? "bg-purple" : "")}style={{color: "white"}}>
             <div class="card-body" data-toggle="collapse" data-target={"#card-content-" + match.uuid}>
                 <h4 class="card-title">
                     <span class="d-none d-lg-inline badge badge-pill badge-light align-middle">{match.team1.sym}</span>
@@ -21,7 +21,7 @@ function Match(match) {
                 </h4>
                 <div class="row d-flex justify-content-between px-3">
                     {Scores(match.team1, match.team2, match.maps)}
-                    {MVPPills([match.team1.mvp, match.team2.mvp])}
+                    {MVPPills(match.team1.mvp.concat(match.team2.mvp).filter(name => name != ""))}
                 </div>
             </div>
 
