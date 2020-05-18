@@ -2,3 +2,4 @@ log.txt
 __pycache__
 *.ipynb
 stages/*/matches/*.json
+blackout.png
