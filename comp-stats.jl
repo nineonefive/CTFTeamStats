@@ -17,8 +17,8 @@ module Metadata
 end
 
 function getCompetitiveStats(player, n=-1, autosave=false)
-        header, rows = Parsing.getPlayerPage(player)
-        games = Parsing.processGameRow.(rows)
+    header, rows = Parsing.getPlayerPage(player)
+    games = Parsing.processGameRow.(rows)
     
     # only competitive games
     filter!(x -> occursin("ctfmatch", x[2]), games)
@@ -82,14 +82,21 @@ function getTeamStats(team, invalid)
         if name in invalid
             continue
         end
-        time = @elapsed last_updated, df = getCompetitiveStats(name)
-        push!(updates, (name=name, game=last_updated))
 
-        @info "Retrieved stats for $name in $time s"
+        try
+            time = @elapsed last_updated, df = getCompetitiveStats(name)
+            push!(updates, (name=name, game=last_updated))
 
-        mkpath("stats/$team")
+            @info "Retrieved stats for $name in $time s"
 
-        CSV.write("stats/$team/$name.csv", df)
+            mkpath("stats/$team")
+
+            CSV.write("stats/$team/$name.csv", df)
+        catch e
+            @warn "Failed to retrieve stats for $name"
+            @warn "$e"
+            continue
+        end
     end
 
     return updates
@@ -112,7 +119,7 @@ function verifyTeamRoster!(team, last_updated=Metadata.getNameUpdateTime())
                 @info "Updated $name to $(res[begin])"
                 names[i] = res[begin]
 
-                mv("stats/$team/$name.csv", "stats/$team/$(res[begin]).csv")
+                # mv("stats/$team/$name.csv", "stats/$team/$(res[begin]).csv")
             end
         end
     end
@@ -155,8 +162,10 @@ function loadAllTeams()
 
             for team in teams
                 @info "Verifying $team"
+                println("Verifying $team")
                 res, invalid = verifyTeamRoster!(team)
                 @info "Processing $team.."
+                println("Processing $team")
                 u = getTeamStats(team, invalid)
                 append!(updates, u)
             end

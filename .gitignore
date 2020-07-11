@@ -3,3 +3,5 @@ __pycache__
 *.ipynb
 stages/*/matches/*.json
 blackout.png
+julia/.ipynb_checkpoints/stats-parsing-checkpoint.jl
+.vscode/settings.json
