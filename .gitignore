@@ -4,4 +4,6 @@ __pycache__
 stages/*/matches/*.json
 blackout.png
 julia/.ipynb_checkpoints/stats-parsing-checkpoint.jl
-.vscode/settings.json
+.vscode/
+firebase.py
+ctf-stats-*.json

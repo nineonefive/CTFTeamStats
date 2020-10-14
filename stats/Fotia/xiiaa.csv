@@ -1,0 +1,3 @@
+kit_type,playtime,kills,deaths,flags_captured,flags_recovered,flags_stolen,time_with_flag,damage_dealt,damage_received,hp_restored,kdr
+SOLDIER,30295.0,432.0,243.0,1.0,91.0,1.0,228.0,50192.129,30236.662999999997,0.0,1.7777777777777777
+HEAVY,23399.0,466.0,98.0,0.0,55.0,6.0,14.0,51764.45600000001,28258.786,0.0,4.755102040816326

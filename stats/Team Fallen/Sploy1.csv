@@ -1,0 +1,5 @@
+kit_type,playtime,kills,deaths,flags_captured,flags_recovered,flags_stolen,time_with_flag,damage_dealt,damage_received,hp_restored,kdr
+MEDIC,7102.0,37.0,49.0,0.0,7.0,0.0,0.0,4269.314,4546.2570000000005,8397.0,0.7551020408163265
+ARCHER,14606.0,296.0,124.0,0.0,0.0,0.0,0.0,7412.032,6210.422,0.0,2.3870967741935485
+HEAVY,53.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,NaN
+SOLDIER,3190.0,32.0,27.0,1.0,0.0,0.0,20.0,2518.636,2881.118,0.0,1.1851851851851851
